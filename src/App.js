@@ -1,24 +1,39 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+
+import "./App.css";
+
+import Article from "./components/Article";
 
 function App() {
+  const [articles, setArticles] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get("https://jsonplaceholder.typicode.com/photos")
+      .then(({ data }) => {
+        let albumIds = data.map(val => val.albumId);
+        const uniqueSet = new Set(albumIds);
+        albumIds = [...uniqueSet];
+        const latestAlbumIds = albumIds.slice(-3);
+        let photosInLatestAlbums = [];
+        latestAlbumIds.forEach(id => {
+          let albumPhotos = data.filter(value => id === value.albumId);
+          photosInLatestAlbums = photosInLatestAlbums.concat(
+            albumPhotos.slice(-2)
+          );
+        });
+        setArticles(photosInLatestAlbums);
+      });
+  }, []);
+
+  console.log("articles", articles);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {articles.map(article => (
+        <Article key={article.id} article={article} />
+      ))}
     </div>
   );
 }

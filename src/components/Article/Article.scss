@@ -1,0 +1,15 @@
+.article {
+  flex-direction: column;
+  width: 49%;
+  border-width: 1px;
+  border-style: solid;
+  &:nth-child(2n),
+  &:nth-child(3n) {
+    border-color: lime;
+  }
+
+  .image {
+    height: 150px;
+    width: 150px;
+  }
+}
